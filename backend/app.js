@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const helmet = require('helmet');
+const cors = require('cors');
 const mongoose = require('mongoose');
 const logger = require('./utils/logger');
 const ResourceNotFound = require('./utils/errors/ResourceNotFound');
@@ -25,16 +26,8 @@ app.set('env', NODE_ENV);
 
 app.use(helmet());
 app.use(express.json());
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
-  if (req.method === 'OPTIONS') {
-    res.send();
-  } else {
-    next();
-  }
-});
+app.use(cors());
+app.options('*', cors());
 
 app.post('/signin', login);
 app.post('/signup', createUser);
