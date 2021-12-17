@@ -38,7 +38,7 @@ module.exports.deleteCard = (req, res, next) => {
   const { cardId } = req.params;
   Card.findOne({ cardId })
     .then((card) => {
-      if (card.owner.toString() !== req.user._id) {
+      if (card.owner !== req.user._id) {
         throw new NotAllowedError('You are not allowed to delete this card');
       }
       Card.deleteOne(
