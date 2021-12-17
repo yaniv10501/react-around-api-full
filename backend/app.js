@@ -26,6 +26,16 @@ app.set('env', NODE_ENV);
 
 app.use(helmet());
 app.use(express.json());
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
+  if (req.method === 'OPTIONS') {
+    res.send();
+  } else {
+    next();
+  }
+});
 app.use(cors());
 app.options('*', cors());
 
