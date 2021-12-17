@@ -53,3 +53,5 @@ app.listen(PORT, () => {
     `Express Server started on Port ${PORT} | Environment : ${NODE_ENV}`,
   );
 });
+
+module.exports = app;
