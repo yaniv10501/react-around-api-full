@@ -36,7 +36,7 @@ module.exports.createCard = (req, res, next) => {
 
 module.exports.deleteCard = (req, res, next) => {
   const { cardId } = req.params;
-  Card.findOne({ cardId })
+  Card.findOne({ _id: cardId })
     .then((card) => {
       // eslint-disable-next-line no-console
       console.log(req.user._id);
