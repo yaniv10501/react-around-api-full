@@ -51,7 +51,7 @@ app.use(auth);
 app.use('/', usersRoutes);
 app.use('/', cardsRoutes);
 
-app.use(errors());
+app.use((req, res, next) => next(errors()));
 
 app.use((req, res, next) => new ResourceNotFound(req, res, next));
 
