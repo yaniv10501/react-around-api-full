@@ -12,7 +12,7 @@ router.get('/users', getAllUsers);
 router.get('/users/me', getUserById);
 
 router.patch('/users/me', celebrate({
-  [Segments.BODY]: Joi.object().kesy({
+  [Segments.BODY]: Joi.object().keys({
     name: Joi.string().required,
     about: Joi.string().required,
   }),
