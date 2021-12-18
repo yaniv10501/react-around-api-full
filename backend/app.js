@@ -42,7 +42,7 @@ app.post('/signup', createUser);
 
 app.use(celebrate({
   [Segments.HEADERS]: Joi.object({
-    token: Joi.string().required(),
+    authorization: Joi.string().required(),
   }).unknown(),
 }));
 
