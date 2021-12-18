@@ -4,11 +4,10 @@ const helmet = require('helmet');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const {
-  celebrate, Joi, errors, Segments,
+  celebrate, Joi, Segments,
 } = require('celebrate');
 const logger = require('./utils/logger');
 const ResourceNotFound = require('./utils/errors/ResourceNotFound');
-const JoiError = require('./utils/errors/JoiError');
 
 const app = express();
 const usersRoutes = require('./routes/users');
@@ -51,8 +50,6 @@ app.use(auth);
 
 app.use('/', usersRoutes);
 app.use('/', cardsRoutes);
-
-app.use((req, res, next) => next(new JoiError(errors())));
 
 app.use((req, res, next) => new ResourceNotFound(req, res, next));
 
