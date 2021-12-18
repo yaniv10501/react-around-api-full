@@ -12,7 +12,7 @@ class JoiError extends Error {
 module.exports.checkJoiError = (err, req, res, next) => {
   if (isCelebrateError(err)) {
     console.log(err);
-    return new JoiError(err);
+    return next(new JoiError(err));
   }
   return next(err);
 };
