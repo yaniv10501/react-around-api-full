@@ -4,7 +4,7 @@ const helmet = require('helmet');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const {
-  celebrate, Joi, Segments,
+  celebrate, Joi, Segments, errors,
 } = require('celebrate');
 const logger = require('./utils/logger');
 const ResourceNotFound = require('./utils/errors/ResourceNotFound');
@@ -53,6 +53,8 @@ app.use('/', usersRoutes);
 app.use('/', cardsRoutes);
 
 app.use((req, res, next) => new ResourceNotFound(req, res, next));
+
+app.use(errors());
 
 app.use(checkJoiError);
 
