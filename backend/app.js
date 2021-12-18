@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const logger = require('./utils/logger');
 const ResourceNotFound = require('./utils/errors/ResourceNotFound');
 const { celebrateSignin, celebrateSignup, celebrateHeaders } = require('./utils/celebrate');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const app = express();
 const usersRoutes = require('./routes/users');
@@ -31,6 +32,8 @@ app.use(express.json());
 app.use(cors());
 app.options('*', cors());
 
+app.use(requestLogger);
+
 app.get('/crash-test', () => {
   setTimeout(() => {
     throw new Error('Server will crash now');
@@ -46,6 +49,8 @@ app.use(auth);
 app.use('/', usersRoutes);
 app.use('/', cardsRoutes);
 
+app.use(errorLogger);
+
 app.use((req, res, next) => new ResourceNotFound(req, res, next));
 
 app.use(checkJoiError);
@@ -57,5 +62,3 @@ app.listen(PORT, () => {
     `Express Server started on Port ${PORT} | Environment : ${NODE_ENV}`,
   );
 });
-
-module.exports = app;
