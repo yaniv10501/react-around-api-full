@@ -3,6 +3,9 @@ const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const {
+  celebrate, Joi, errors, Segments,
+} = require('celebrate');
 const logger = require('./utils/logger');
 const ResourceNotFound = require('./utils/errors/ResourceNotFound');
 
@@ -42,10 +45,18 @@ app.options('*', cors());
 app.post('/signin', login);
 app.post('/signup', createUser);
 
+app.use(celebrate({
+  [Segments.HEADERS]: Joi.object({
+    Authorization: Joi.string().required(),
+  }).unknown(),
+}));
+
 app.use(auth);
 
 app.use('/', usersRoutes);
 app.use('/', cardsRoutes);
+
+app.use(errors());
 
 app.use((req, res, next) => new ResourceNotFound(req, res, next));
 
