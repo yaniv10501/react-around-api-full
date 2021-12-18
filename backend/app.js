@@ -39,10 +39,10 @@ app.get('/crash-test', () => {
     throw new Error('Server will crash now');
   }, 0);
 });
-app.post('/signin', celebrateSignin(), login);
-app.post('/signup', celebrateSignup(), createUser);
+app.post('/signin', celebrateSignin, login);
+app.post('/signup', celebrateSignup, createUser);
 
-app.use(celebrateHeaders());
+app.use(celebrateHeaders);
 
 app.use(auth);
 

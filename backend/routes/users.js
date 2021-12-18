@@ -10,13 +10,13 @@ router.get('/users/me', getUserById);
 
 router.patch(
   '/users/me',
-  celebrateUpdateUser(),
+  celebrateUpdateUser,
   updateUser,
 );
 
 router.patch(
   '/users/me/avatar',
-  celebrateUpdateAvatar(),
+  celebrateUpdateAvatar,
   updateAvater,
 );
 
