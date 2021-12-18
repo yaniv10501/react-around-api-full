@@ -54,8 +54,6 @@ app.use('/', cardsRoutes);
 
 app.use((req, res, next) => new ResourceNotFound(req, res, next));
 
-app.use(errors());
-
 app.use(checkJoiError);
 
 app.use(ServerError);

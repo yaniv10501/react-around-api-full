@@ -3,7 +3,7 @@ const { isCelebrateError } = require('celebrate');
 
 class JoiError extends Error {
   constructor(err) {
-    super(err.message || err);
+    super(err.validation.body.message || err.message || err);
     this.name = 'JoiError';
     this.status = 400;
   }
