@@ -41,7 +41,7 @@ app.post('/signin', login);
 app.post('/signup', createUser);
 
 app.use(celebrate({
-  [Segments.HEADERS]: Joi.object({
+  [Segments.HEADERS]: Joi.array({
     Authorization: Joi.string().required(),
   }).unknown(),
 }));
