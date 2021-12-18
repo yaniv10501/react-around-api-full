@@ -38,10 +38,6 @@ module.exports.deleteCard = (req, res, next) => {
   const { cardId } = req.params;
   Card.findOne({ _id: cardId })
     .then((card) => {
-      // eslint-disable-next-line no-console
-      console.log(req.user._id);
-      // eslint-disable-next-line no-console
-      console.log(card.owner);
       if (card.owner.toString() !== req.user._id) {
         throw new NotAllowedError('You are not allowed to delete this card');
       }

@@ -3,11 +3,9 @@ const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const {
-  celebrate, Joi, Segments, errors,
-} = require('celebrate');
 const logger = require('./utils/logger');
 const ResourceNotFound = require('./utils/errors/ResourceNotFound');
+const { celebrateSignin, celebrateSignup, celebrateHeaders } = require('./utils/celebrate');
 
 const app = express();
 const usersRoutes = require('./routes/users');
@@ -38,14 +36,10 @@ app.get('/crash-test', () => {
     throw new Error('Server will crash now');
   }, 0);
 });
-app.post('/signin', login);
-app.post('/signup', createUser);
+app.post('/signin', celebrateSignin(), login);
+app.post('/signup', celebrateSignup(), createUser);
 
-app.use(celebrate({
-  [Segments.HEADERS]: Joi.object({
-    authorization: Joi.string().required(),
-  }).unknown(),
-}));
+app.use(celebrateHeaders());
 
 app.use(auth);
 
