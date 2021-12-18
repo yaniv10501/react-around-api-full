@@ -3,7 +3,7 @@ const { isCelebrateError } = require('celebrate');
 
 class JoiError extends Error {
   constructor(err) {
-    super(`${err.message}: ${err}`);
+    super(err);
     this.name = 'JoiError';
     this.status = 400;
   }
@@ -11,7 +11,6 @@ class JoiError extends Error {
 
 module.exports.checkJoiError = (err, req, res, next) => {
   if (isCelebrateError(err)) {
-    console.log(err.toString());
     return next(new JoiError(err));
   }
   return next(err);

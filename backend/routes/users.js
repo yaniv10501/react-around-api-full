@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const { celebrate, Joi, Segments } = require('celebrate');
 const {
   getAllUsers,
   getUserById,
@@ -10,7 +11,12 @@ router.get('/users', getAllUsers);
 
 router.get('/users/me', getUserById);
 
-router.patch('/users/me', updateUser);
+router.patch('/users/me', celebrate({
+  [Segments.BODY]: Joi.object().kesy({
+    name: Joi.string().required,
+    about: Joi.string().required,
+  }),
+}), updateUser);
 
 router.patch('/users/me/avatar', updateAvater);
 
