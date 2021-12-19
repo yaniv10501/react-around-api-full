@@ -1,6 +1,5 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const { randomBytes } = require('crypto');
 const User = require('../models/user');
 const NotFoundError = require('../utils/errors/NotFoundError');
 const CastError = require('../utils/errors/CastError');
@@ -106,7 +105,7 @@ module.exports.updateAvater = (req, res, next) => {
 
 module.exports.login = (req, res, next) => {
   const {
-    JWT_SECRET = randomBytes(32).toString('hex'),
+    JWT_SECRET = 'Secret-key',
   } = process.env;
   const { email, password } = req.body;
   User.findOne({ email })
