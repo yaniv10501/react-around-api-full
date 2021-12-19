@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 const NotFoundError = require('../utils/errors/NotFoundError');
+const AuthorizationError = require('../utils/errors/AuthorizationError');
 const CastError = require('../utils/errors/CastError');
 const ValidationError = require('../utils/errors/ValidationError');
 const AlreadyUsedError = require('../utils/errors/AlreadyUsedError');
@@ -33,7 +34,7 @@ module.exports.getUserById = (req, res, next) => {
     .orFail(() => {
       throw new NotFoundError('User ID not found');
     })
-    .then((users) => res.send(users))
+    .then((user) => res.send(user))
     .catch((error) => checkErrors(error, next));
 };
 
@@ -53,9 +54,15 @@ module.exports.createUser = (req, res, next) => {
       email,
       password: hash,
     })
-      .then((user) => res.json({
+      .then((newUser) => res.status(201).json({
         message: 'A new user has been created',
-        user,
+        user: {
+          _id: newUser._id,
+          name: newUser.name,
+          about: newUser.about,
+          link: newUser.link,
+          email: newUser.email,
+        },
       }))
       .catch((error) => checkErrors(error, next)))
     .catch((error) => checkErrors(error, next));
@@ -110,7 +117,7 @@ module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
   User.findOne({ email })
     .orFail(() => {
-      throw new NotFoundError('Incorrect email or password');
+      throw new AuthorizationError('Incorrect email or password');
     })
     .select('+password')
     .then((user) => bcrypt.compare(password, user.password)
@@ -119,7 +126,7 @@ module.exports.login = (req, res, next) => {
           const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
           return res.send({ token });
         }
-        throw new NotFoundError('Incorrect email or password');
+        throw new AuthorizationError('Incorrect email or password');
       })
       .catch((error) => checkErrors(error, next)))
     .catch((error) => checkErrors(error, next));

@@ -21,7 +21,7 @@ module.exports.getAllCards = (req, res, next) => {
 module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
   Card.create({ name, link, owner: req.user._id })
-    .then((card) => res.json({
+    .then((card) => res.status(201).json({
       message: 'A new card has been created',
       card,
     }))
@@ -37,6 +37,9 @@ module.exports.createCard = (req, res, next) => {
 module.exports.deleteCard = (req, res, next) => {
   const { cardId } = req.params;
   Card.findOne({ _id: cardId })
+    .orFail(() => {
+      throw new NotFoundError('Card ID not found');
+    })
     .then((card) => {
       if (card.owner.toString() !== req.user._id) {
         throw new NotAllowedError('You are not allowed to delete this card');
@@ -44,9 +47,6 @@ module.exports.deleteCard = (req, res, next) => {
       Card.deleteOne(
         { _id: cardId },
       )
-        .orFail(() => {
-          throw new NotFoundError('Card ID not found');
-        })
         .then(() => res.json({ message: `card - ${cardId} has been deleted` }))
         .catch((error) => checkCastError(error, next));
     })

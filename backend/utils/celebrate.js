@@ -1,6 +1,9 @@
-const { celebrate, Joi, Segments } = require('celebrate');
+const {
+  celebrate, Joi, Segments,
+} = require('celebrate');
 const validateUrl = require('./validateUrl');
 const validateEmail = require('./validateEmail');
+const AuthorizationError = require('./errors/AuthorizationError');
 
 module.exports.celebrateCardId = celebrate({
   [Segments.PARAMS]: Joi.object().keys({
@@ -28,11 +31,15 @@ module.exports.celebrateUpdateAvatar = celebrate({
   }),
 });
 
-module.exports.celebrateHeaders = celebrate({
-  [Segments.HEADERS]: Joi.object({
-    authorization: Joi.string().required(),
-  }).unknown(),
-});
+const HeadersSchema = Joi.object({
+  authorization: Joi.string().required(),
+}).unknown();
+
+module.exports.celebrateHeaders = (req, res, next) => {
+  const { error } = HeadersSchema.validate(req.headers);
+  if (error) return next(new AuthorizationError('Authorization is required'));
+  return next();
+};
 
 module.exports.celebrateSignin = celebrate({
   [Segments.BODY]: Joi.object().keys({

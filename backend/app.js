@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const logger = require('./utils/logger');
@@ -22,12 +23,18 @@ const {
   NODE_ENV = 'development',
 } = process.env;
 
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+});
+
 mongoose.connect(`${MONGO_DB_SERVER}/aroundb`);
 
 app.set('port', PORT);
 app.set('env', NODE_ENV);
 
 app.use(helmet());
+app.use(limiter);
 app.use(express.json());
 app.use(cors());
 app.options('*', cors());
@@ -42,7 +49,7 @@ app.get('/crash-test', () => {
 app.post('/signin', celebrateSignin, login);
 app.post('/signup', celebrateSignup, createUser);
 
-app.use(celebrateHeaders);
+app.use((req, res, next) => celebrateHeaders(req, res, next));
 
 app.use(auth);
 
