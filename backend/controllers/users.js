@@ -123,7 +123,7 @@ module.exports.login = (req, res, next) => {
     })
     .select('+password')
     .then((user) => bcrypt.compare(password, user.password)
-      .then((matched) => {
+      .then(async (matched) => {
         if (matched) {
           const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '10s' });
           const refreshToken = uuidv4();
