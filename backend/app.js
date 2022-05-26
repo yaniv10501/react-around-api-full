@@ -7,7 +7,7 @@ const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const logger = require('./utils/logger');
 const ResourceNotFound = require('./utils/errors/ResourceNotFound');
-const { celebrateSignin, celebrateSignup, celebrateHeaders } = require('./utils/celebrate');
+const { celebrateSignin, celebrateSignup } = require('./utils/celebrate');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const app = express();
@@ -46,8 +46,6 @@ app.use(requestLogger);
 
 app.post('/api/signin', celebrateSignin, login);
 app.post('/api/signup', celebrateSignup, createUser);
-
-app.use((req, res, next) => celebrateHeaders(req, res, next));
 
 app.use(auth);
 
