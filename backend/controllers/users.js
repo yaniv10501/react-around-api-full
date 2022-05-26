@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
 const User = require('../models/user');
+const Tokens = require('../models/token');
 const NotFoundError = require('../utils/errors/NotFoundError');
 const AuthorizationError = require('../utils/errors/AuthorizationError');
 const CastError = require('../utils/errors/CastError');
@@ -129,23 +130,83 @@ module.exports.login = (req, res, next) => {
           const refreshJwt = jwt.sign({ _id: user._id, token: refreshToken }, JWT_SECRET, {
             expiresIn: '7d',
           });
-          res.cookie('authorization', `Bearer ${token}`, {
-            maxAge: 1000 * 30,
-            httpOnly: true,
-            secure: true,
-            domain: 'nomoreparties.sbs',
-          });
-          res.cookie('refreshToken', refreshJwt, {
-            maxAge: 1000 * 60 * 60 * 24 * 7,
-            httpOnly: true,
-            secure: true,
-            signed: true,
-            domain: 'nomoreparties.sbs',
-          });
-          return res.json({
-            email: user.email,
-            name: user.name,
-          });
+          await Tokens.create({
+            userId: user._id,
+            refreshTokens: [
+              {
+                token: refreshToken,
+                expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
+              },
+            ],
+          })
+            .then(() => {
+              res.cookie('authorization', `Bearer ${token}`, {
+                maxAge: 1000 * 30,
+                httpOnly: true,
+                secure: true,
+                domain: 'nomoreparties.sbs',
+              });
+              res.cookie('refreshToken', refreshJwt, {
+                maxAge: 1000 * 60 * 60 * 24 * 7,
+                httpOnly: true,
+                secure: true,
+                signed: true,
+                domain: 'nomoreparties.sbs',
+              });
+              return res.json({
+                email: user.email,
+                name: user.name,
+              });
+            })
+            .catch((error) => {
+              if (
+                error.name !== 'MongoServerError' ||
+                !error.message.includes('userId_1 dup key')
+              ) {
+                checkErrors(error, next);
+                return;
+              }
+              Tokens.findOneAndUpdate(
+                { userId: user._id },
+                {
+                  $addToSet: {
+                    refreshTokens: {
+                      token: refreshToken,
+                      expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
+                    },
+                  },
+                }
+              )
+                .then(async (result) => {
+                  await result.refreshTokens.forEach(async (item) => {
+                    if (Date.now() >= item.expires) {
+                      await Tokens.findOneAndUpdate(
+                        { userId: user._id },
+                        {
+                          $pull: { refreshTokens: { token: item.token } },
+                        }
+                      );
+                    }
+                  });
+                  res.cookie('authorization', `Bearer ${token}`, {
+                    maxAge: 1000 * 30,
+                    httpOnly: true,
+                    secure: true,
+                    domain: 'nomoreparties.sbs',
+                  });
+                  res.cookie('refreshToken', refreshJwt, {
+                    maxAge: 1000 * 60 * 60 * 24 * 7,
+                    httpOnly: true,
+                    secure: true,
+                    signed: true,
+                    domain: 'nomoreparties.sbs',
+                  });
+                  return res.json({
+                    message: 'Successfully logged in',
+                  });
+                })
+                .catch((err) => checkErrors(err, next));
+            });
         }
         throw new AuthorizationError('Incorrect email or password');
       })
