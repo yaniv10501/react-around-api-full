@@ -3,6 +3,7 @@ const express = require('express');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const logger = require('./utils/logger');
 const ResourceNotFound = require('./utils/errors/ResourceNotFound');
@@ -21,6 +22,7 @@ const {
   PORT = 3000,
   MONGO_DB_SERVER = 'mongodb://localhost:27017',
   NODE_ENV = 'development',
+  COOKIE_SECRET = 'cookie-secret'
 } = process.env;
 
 const limiter = rateLimit({
@@ -36,6 +38,7 @@ app.set('env', NODE_ENV);
 app.use(helmet());
 app.use(limiter);
 app.use(express.json());
+app.use(cookieParser(COOKIE_SECRET));
 app.use(cors());
 app.options('*', cors());
 
