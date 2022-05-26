@@ -44,15 +44,15 @@ app.options('*', cors());
 
 app.use(requestLogger);
 
-app.post('/signin', celebrateSignin, login);
-app.post('/signup', celebrateSignup, createUser);
+app.post('/api/signin', celebrateSignin, login);
+app.post('/api/signup', celebrateSignup, createUser);
 
 app.use((req, res, next) => celebrateHeaders(req, res, next));
 
 app.use(auth);
 
-app.use('/', usersRoutes);
-app.use('/', cardsRoutes);
+app.use('/api', usersRoutes);
+app.use('/api', cardsRoutes);
 
 app.use(errorLogger);
 
