@@ -144,14 +144,14 @@ module.exports.login = (req, res, next) => {
                 maxAge: 1000 * 30,
                 httpOnly: true,
                 secure: true,
-                domain: 'nomoreparties.sbs',
+                domain: 'around.yanivportfolio.com',
               });
               res.cookie('refreshToken', refreshJwt, {
                 maxAge: 1000 * 60 * 60 * 24 * 7,
                 httpOnly: true,
                 secure: true,
                 signed: true,
-                domain: 'nomoreparties.sbs',
+                domain: 'around.yanivportfolio.com',
               });
               return res.json({
                 email: user.email,
@@ -192,14 +192,14 @@ module.exports.login = (req, res, next) => {
                     maxAge: 1000 * 30,
                     httpOnly: true,
                     secure: true,
-                    domain: 'nomoreparties.sbs',
+                    domain: 'around.yanivportfolio.com',
                   });
                   res.cookie('refreshToken', refreshJwt, {
                     maxAge: 1000 * 60 * 60 * 24 * 7,
                     httpOnly: true,
                     secure: true,
                     signed: true,
-                    domain: 'nomoreparties.sbs',
+                    domain: 'around.yanivportfolio.com',
                   });
                   return res.json({
                     message: 'Successfully logged in',

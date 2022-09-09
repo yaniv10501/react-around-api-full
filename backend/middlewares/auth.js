@@ -107,14 +107,14 @@ module.exports = async (req, res, next) => {
               maxAge: 1000 * 60 * 15,
               httpOnly: true,
               secure: true,
-              domain: 'nomoreparties.sbs',
+              domain: 'around.yanivportfolio.com',
             });
             res.cookie('refreshToken', newRefreshJwt, {
               maxAge: 1000 * 60 * 60 * 24 * 7,
               httpOnly: true,
               secure: true,
               signed: true,
-              domain: 'nomoreparties.sbs',
+              domain: 'around.yanivportfolio.com',
             });
             payload = { _id: userId };
           })
