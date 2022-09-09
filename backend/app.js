@@ -19,7 +19,7 @@ const auth = require('./middlewares/auth');
 const { checkJoiError } = require('./utils/errors/JoiError');
 
 const {
-  PORT = 3000,
+  PORT = 3015,
   MONGO_DB_SERVER = 'mongodb://localhost:27017',
   NODE_ENV = 'development',
   COOKIE_SECRET = 'cookie-secret'
